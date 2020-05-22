@@ -40,11 +40,11 @@ public slots:
 
     void newItem(QStandardItem *item, unsigned int address);
 
-    void newDevice(unsigned int address);
+    bool newDevice(unsigned int address);
 
     void receiveNetwork(QVariant ds_network);
 
-    void receiveDevie(QVariant ds_device,int i);
+    void receiveDevie(QVariant ds_device);
 
 private slots:
 

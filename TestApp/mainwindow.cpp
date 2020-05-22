@@ -55,7 +55,7 @@ void MainWindow::newItem(QStandardItem *item, unsigned int address)
 {
     item->setData(QVariant(false),ROLE_PARENT);
     item->setData(QVariant(true),ROLE_ITEM);
-    auto parent = modelItem->findItems(QString(address));
+    auto parent = modelItem->findItems(QString::number(address,16).toUpper());
     if(parent.count() > 0){
         parent.at(0)->appendRow(item);
     }else{
@@ -63,40 +63,64 @@ void MainWindow::newItem(QStandardItem *item, unsigned int address)
     }
 }
 
-void MainWindow::newDevice(unsigned int address)
+bool MainWindow::newDevice(unsigned int address)
 {
+    auto list = modelItem->findItems(QString::number(address,16).toUpper());
+    if(list.count() > 0){
+        return false;
+    }
     QStandardItem *item = new QStandardItem;
-    item->setData(QString::number(address),Qt::DisplayRole);
+    item->setData(QString::number(address,16).toUpper(),Qt::DisplayRole);
     item->setData(QVariant(true),ROLE_PARENT);
     item->setData(QVariant(false),ROLE_ITEM);
     modelItem->appendRow(item);
+    return true;
 }
 
 void MainWindow::receiveNetwork(QVariant ds_network)
 {
 
     network_info_t ds_network_info = ds_network.value<network_info_t>();
-    ui->labelConnect->setText("EXTPANID: " + QString::number(ds_network_info.ext_pan_id) +
-                              " PANID: " + QString::number(ds_network_info.pan_id) +
-                              " CHANNEL: " + ds_network_info.nwk_channel +
-                              " STATE: " + ds_network_info.state);
+    ui->labelConnect->setText("EXTPANID: " + QString::number(ds_network_info.ext_pan_id,16).toUpper() +
+                              " PANID: " + QString::number(ds_network_info.pan_id,16).toUpper() +
+                              " CHANNEL: " + QString::number(ds_network_info.nwk_channel).toUpper() +
+                              " STATE: " + QString::number(ds_network_info.state).toUpper());
 }
 
-void MainWindow::receiveDevie(QVariant ds_device, int i)
+void MainWindow::receiveDevie(QVariant ds_device)
 {
     device_info_t ds_device_info = ds_device.value<device_info_t>();
-    auto parent = modelItem->findItems(QString(ds_device_info.nwk_addr));
-    QStandardItem *item = new QStandardItem;
-    item->setData(QVariant::fromValue(ds_device_info.ieee_addr),ROLE_IEEE_ADDR);
-    item->setData(ds_device_info.ep_list[i].endpoint_id,ROLE_ENDPOINT);
-    item->setData(0xFFFFFF,ROLE_GROUP_ADDR);
-    item->setData(ds_device_info.ep_list->device_id,Qt::DisplayRole);
-    item->setData(i,ROLE_DEVICE_I);
-    if(parent.count() > 0){
-        newItem(item,ds_device_info.nwk_addr);
-    }else{
-        newDevice(ds_device_info.nwk_addr);
-        newItem(ds_device_info.ep_list->device_id,ds_device_info.nwk_addr);
+//        for(int i = 0; i < 20; i++){
+//            auto itemList = modelItem->findItems(QString::number(ds_device_info.ep_list[i].device_id,16));
+//            if(itemList.count() > 0){
+//                continue;
+//            }
+//            if(ds_device_info.ep_list[i].device_id == 0){
+//                continue;
+//            }
+//            QStandardItem *item = new QStandardItem;
+//            item->setData(QString::number(ds_device_info.ep_list[i].device_id,16),Qt::DisplayRole);
+//            item->setData(ds_device_info.ep_list[i].endpoint_id,ROLE_ENDPOINT);
+//            item->setData(0xFFFFFF,ROLE_GROUP_ADDR);
+//            newItem(item,ds_device_info.nwk_addr);
+//        }
+    if(!newDevice(ds_device_info.ieee_addr)){
+        return;
+    }
+    for(int i = 0; i < 20; i++){
+        auto itemList = modelItem->findItems(QString::number(ds_device_info.ep_list[i].device_id,16));
+        if(itemList.count() > 0){
+            continue;
+        }
+        if(ds_device_info.ep_list[i].device_id == 0){
+            continue;
+        }
+        QStandardItem *item = new QStandardItem;
+        item->setData(QString::number(ds_device_info.ep_list[i].device_id,16),Qt::DisplayRole);
+        item->setData(ds_device_info.ep_list[i].endpoint_id,ROLE_ENDPOINT);
+        item->setData(0xFFFFFF,ROLE_GROUP_ADDR);
+        item->setData(QString::number(ds_device_info.ieee_addr),ROLE_IEEE_ADDR);
+        newItem(item,ds_device_info.ieee_addr);
     }
 }
 
