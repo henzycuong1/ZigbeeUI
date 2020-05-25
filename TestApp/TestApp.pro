@@ -1,7 +1,7 @@
 QT += core gui widgets
 
 TEMPLATE = app
-#CONFIG += console
+CONFIG += console
 CONFIG -= app_bundle
 CONFIG += qt
 CONFIG += thread
@@ -45,6 +45,7 @@ SOURCES += \
         ../gateway.pb-c.c \
         ../nwkmgr.pb-c.c \
         ../otasrvr.pb-c.c \
+        cpp_connect_c.cpp \
         main.cpp \
         mainwindow.cpp \
         #zigbee.c\
@@ -74,6 +75,8 @@ HEADERS += \
     ../hal_types.h \
     ../nwkmgr.pb-c.h \
     ../otasrvr.pb-c.h \
+    cpp_connect_c.h \
+    extern.h \
     mainwindow.h \
     uiconnection.h \
     zigbee.h
@@ -84,7 +87,7 @@ INCLUDEPATH += \
  ../engines \
  ./google/protobuf-c/ \
 
-#unix|win32: LIBS += -lthread
+#unix|win32: LIBS += -lprotobuf-c
 
 FORMS += \
     mainwindow.ui \

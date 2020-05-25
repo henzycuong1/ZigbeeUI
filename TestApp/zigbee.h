@@ -44,7 +44,9 @@ signals:
 
     void hasBeenConnected(QVariant ds_network_status);
 
-    void newDevice(QVariant ds_device_table, int i);
+    void newDevice(QVariant ds_device_table);
+
+    void signal_print_log(char *format);
 
 private:
 

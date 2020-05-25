@@ -80,7 +80,7 @@ void zigbee::unregister_segmentation_fault_handler()
 
 void zigbee::init(string nwk_manager_server_hostname, unsigned int nwk_manager_server_port, string gateway_server_hostname, unsigned int gateway_server_port, string ota_server_hostname, unsigned int ota_server_port)
 {
-
+    int i;
     char char_nwk_manager_server_hostname[nwk_manager_server_hostname.length() + 1];
     char char_gateway_server_hostname[gateway_server_hostname.length() + 1];
     char char_ota_server_hostname[ota_server_hostname.length() + 1];
@@ -88,7 +88,6 @@ void zigbee::init(string nwk_manager_server_hostname, unsigned int nwk_manager_s
     strcpy(char_nwk_manager_server_hostname,nwk_manager_server_hostname.c_str());
     strcpy(char_gateway_server_hostname,gateway_server_hostname.c_str());
     strcpy(char_ota_server_hostname,ota_server_hostname.c_str());
-
     register_segmentation_fault_handler();
 
     ds_init();
@@ -97,15 +96,19 @@ void zigbee::init(string nwk_manager_server_hostname, unsigned int nwk_manager_s
     {
 
         while (polling_process_activity()){
-
-        }
-        QVariant data_ds_network_status;
-        QVariant data_ds_device_tabble;
-        data_ds_network_status.setValue(ds_network_status);
-        emit hasBeenConnected(data_ds_network_status);
-        for(int i = 0; i < 21; i++){
-            data_ds_device_tabble.setValue(ds_device_table[i]);
-            emit newDevice(data_ds_device_tabble, i);
+            if(ds_network_status.ext_pan_id != 0){
+                QVariant data_ds_network_status;
+                QVariant data_ds_device_tabble;
+                data_ds_network_status.setValue(ds_network_status);
+                emit hasBeenConnected(data_ds_network_status);
+                for(i = 0; i < 20; i++){
+                    if(ds_device_table[i].valid){
+                        data_ds_device_tabble.setValue(ds_device_table[i]);
+                        emit newDevice(data_ds_device_tabble);
+                    }
+                }
+                i = 0;
+            }
         }
         //si_deinit();
     }

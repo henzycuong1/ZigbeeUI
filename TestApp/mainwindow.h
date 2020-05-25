@@ -5,6 +5,9 @@
 #include <QAbstractItemModel>
 #include <QStandardItem>
 #include <QDebug>
+#include <QProcess>
+#include <QTextStream>
+#include <QDir>
 #include <stdio.h>
 #include <QMessageBox>
 #include "actions_engine.h"
@@ -40,11 +43,13 @@ public slots:
 
     void newItem(QStandardItem *item, unsigned int address);
 
-    void newDevice(unsigned int address);
+    bool newDevice(unsigned int address);
 
     void receiveNetwork(QVariant ds_network);
 
-    void receiveDevie(QVariant ds_device,int i);
+    void receiveDevie(QVariant ds_device);
+
+    void print_log(char *format);
 
 private slots:
 
@@ -100,6 +105,6 @@ private:
 
     QAction *rightRemoveGroup,*rightRemoveScene;
 
-};
 
+};
 #endif // MAINWINDOW_H

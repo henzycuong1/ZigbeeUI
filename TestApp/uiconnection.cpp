@@ -27,6 +27,7 @@ uiconnection::~uiconnection()
 void uiconnection::receiveNetwork(QVariant ds_network)
 {
     ui->buttonConnect->setText("Disconnect");
+    uiconnection::hide();
 }
 
 void uiconnection::on_buttonConnect_clicked()

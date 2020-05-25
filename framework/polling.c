@@ -145,7 +145,6 @@ void polling_undefine_poll_fd(int fd_index)
 bool polling_process_activity(void)
 {
 	int i;
-	
 	if (poll(polling_fds, polling_fds_count, -1) > 0)
 	{
 		for (i = 0; i < polling_fds_count; i++)

@@ -63,6 +63,8 @@
 #include "macros.h"
 #include "device_list_engine.h"
 
+#include "cpp_connect_c.h"
+
 /******************************************************************************
  * Constants
  *****************************************************************************/
@@ -1128,7 +1130,7 @@ void ui_print_status(uint64_t timeout_ms, char * format, ...)
 void _ui_print_log(const char * func_name, bool use_default_color, char * format, ...)
 {
 	va_list args;
-	
+    connect_print_log(format);
 	va_start(args, format);
 	
 	SCROLLING(SECTION_LOG_TOP + 1,SECTION_LOG_TOP + section_log_lines);
