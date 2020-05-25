@@ -294,10 +294,7 @@ int si_send_packet(pkt_buf_t * pkt, confirmation_processing_cb_t _confirmation_p
 
     confirmation_processing_cb = _confirmation_processing_cb;
 	confirmation_processing_arg = _confirmation_processing_arg;
-    UI_PRINT_LOG("TEST");
-    UI_PRINT_LOG("TEST");
 	ui_print_status(0, "BUSY");
-    UI_PRINT_LOG("TEST");
 	waiting_for_confirmation = true;
 	tu_set_timer(&confirmation_wait_timer, server->confirmation_timeout_interval, false, confirmation_timeout_handler, NULL);
 

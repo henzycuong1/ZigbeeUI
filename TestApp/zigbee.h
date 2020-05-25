@@ -46,6 +46,8 @@ signals:
 
     void newDevice(QVariant ds_device_table);
 
+    void signal_print_log(char *format);
+
 private:
 
     static void register_segmentation_fault_handler(void);

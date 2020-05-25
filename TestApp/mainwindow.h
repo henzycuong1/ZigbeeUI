@@ -5,6 +5,9 @@
 #include <QAbstractItemModel>
 #include <QStandardItem>
 #include <QDebug>
+#include <QProcess>
+#include <QTextStream>
+#include <QDir>
 #include <stdio.h>
 #include <QMessageBox>
 #include "actions_engine.h"
@@ -45,6 +48,8 @@ public slots:
     void receiveNetwork(QVariant ds_network);
 
     void receiveDevie(QVariant ds_device);
+
+    void print_log(char *format);
 
 private slots:
 
@@ -100,6 +105,7 @@ private:
 
     QAction *rightRemoveGroup,*rightRemoveScene;
 
-};
+    QString string = "";
 
+};
 #endif // MAINWINDOW_H

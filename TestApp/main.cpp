@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "extern.h"
 #include "data_structures.h"
 #include "uiconnection.h"
 #include "zigbee.h"
@@ -6,10 +7,12 @@
 #include <QThread>
 #include <stdio.h>
 #include <sys/types.h>
+MainWindow *w;
 int main(int argc, char *argv[])
 {
     qRegisterMetaType<std::string>();
     QApplication a(argc,argv);
+
     QThread *thread_zigbee = new QThread;
 
     zigbee *z = new zigbee;
@@ -18,7 +21,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(&a,&QApplication::aboutToQuit,thread_zigbee,&QThread::quit);
 
-    MainWindow *w = new MainWindow;
+    w = new MainWindow;
     uiconnection *option = new uiconnection;
 
     QObject::connect(w,&MainWindow::showUIConnection,option,&uiconnection::show);
@@ -31,8 +34,10 @@ int main(int argc, char *argv[])
     QObject::connect(option,&uiconnection::startConnect,z,&zigbee::init);
 
     thread_zigbee->start();
-    w->show();
 
+
+
+    w->show();
     int result = a.exec();
     return  result;
 

@@ -88,7 +88,6 @@ void zigbee::init(string nwk_manager_server_hostname, unsigned int nwk_manager_s
     strcpy(char_nwk_manager_server_hostname,nwk_manager_server_hostname.c_str());
     strcpy(char_gateway_server_hostname,gateway_server_hostname.c_str());
     strcpy(char_ota_server_hostname,ota_server_hostname.c_str());
-
     register_segmentation_fault_handler();
 
     ds_init();

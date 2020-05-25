@@ -124,6 +124,13 @@ void MainWindow::receiveDevie(QVariant ds_device)
     }
 }
 
+void MainWindow::print_log(char *format)
+{
+    //string.append(format);
+    ui->listWidget->addItem(QString(format));
+    //qDebug() << string;
+}
+
 void MainWindow::on_actionQuit_triggered()
 {
     QApplication::quit();
@@ -149,7 +156,7 @@ void MainWindow::customContextMenu(QPoint pos)
 {
     QModelIndex index = ui->viewItem->indexAt(pos);
     currentIndex = index;
-    if(index.data(ROLE_ITEM).toBool()){
+    //if(index.data(ROLE_ITEM).toBool()){
         QMenu *menu = new QMenu(this);
         menu->addAction(rightBind);
         menu->addMenu(rightGroup);
@@ -158,7 +165,7 @@ void MainWindow::customContextMenu(QPoint pos)
         menu->addAction(rightRemoveScene);
         menu->addAction(rightSceneRecall);
         menu->popup(ui->viewItem->viewport()->mapToGlobal(pos));
-    }
+   // }
 }
 
 void MainWindow::processBind()
@@ -269,6 +276,8 @@ void MainWindow::initConnect(){
     connect(rightScene_7,&QAction::triggered,this,[=]{ui_selected_scene = 7;processAddScene(7);});
     connect(rightScene_8,&QAction::triggered,this,[=]{ui_selected_scene = 8;processAddScene(8);});
     connect(rightScene_9,&QAction::triggered,this,[=]{ui_selected_scene = 9;processAddScene(9);});
+
+    connect(rightRemoveGroup,&QAction::triggered,this,&MainWindow::processRemoveGroup);
 }
 
 void MainWindow::initPropertyView()
@@ -284,6 +293,7 @@ void MainWindow::initPropertyView()
         modelProperty->appendRow({property,value});
     }
 }
+
 
 void MainWindow::selectItem(const QModelIndex &current, const QModelIndex &previous)
 {
