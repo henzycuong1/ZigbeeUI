@@ -1129,10 +1129,35 @@ void ui_print_status(uint64_t timeout_ms, char * format, ...)
 
 void _ui_print_log(const char * func_name, bool use_default_color, char * format, ...)
 {
-	va_list args;
-    connect_print_log(format);
+    va_list args;
+    int i = 0;
+    int k = 0;
+    int j = 0;
 	va_start(args, format);
-	
+    char *get_args = va_arg(args,char *);
+    if(get_args == NULL || *get_args == 0xffffff){
+        connect_print_log(format);
+        return;
+    }
+    char get_content[strlen(format) + strlen(get_args)];
+    while(i < sizeof (get_content)){
+        get_content[i] = format[k];
+        if(get_content[i] == '%'){
+            while(get_args[j]){
+                get_content[i] = get_args[j];
+                j++;
+                i++;
+            }
+            j = 0;
+            k += 2;
+            continue;
+        }
+        i++;
+        k++;
+    }
+    connect_print_log(format);
+    va_end(args);
+    return;
 	SCROLLING(SECTION_LOG_TOP + 1,SECTION_LOG_TOP + section_log_lines);
 	LOCATE(SECTION_LOG_TOP + section_log_lines, 1);
 	printf("\n");

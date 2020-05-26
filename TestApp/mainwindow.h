@@ -105,6 +105,7 @@ private:
 
     QAction *rightRemoveGroup,*rightRemoveScene;
 
+    QString string = "";
 
 };
 #endif // MAINWINDOW_H

@@ -126,9 +126,9 @@ void MainWindow::receiveDevie(QVariant ds_device)
 
 void MainWindow::print_log(char *format)
 {
-    QString string = QString(format);
-    ui->plainTextEdit->appendPlainText(string);
-    qDebug() << string;
+    //string.append(format);
+    ui->listWidget->addItem(QString(format));
+    //qDebug() << string;
 }
 
 void MainWindow::on_actionQuit_triggered()

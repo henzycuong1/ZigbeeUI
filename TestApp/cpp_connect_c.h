@@ -1,6 +1,6 @@
 #ifndef CPP_CONNECT_C_H
 #define CPP_CONNECT_C_H
-
+#include <stdio.h>
 #ifdef __cplusplus
 extern "C"{
 #endif
