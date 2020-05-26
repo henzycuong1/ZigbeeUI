@@ -1130,23 +1130,46 @@ void ui_print_status(uint64_t timeout_ms, char * format, ...)
 void _ui_print_log(const char * func_name, bool use_default_color, char * format, ...)
 {
     va_list args;
-    int i = 0;
-    int k = 0;
-    int j = 0;
+    int i = 0,j = 0, k = 0;
+    char args_type[1];
+    bool has_args = false;
 	va_start(args, format);
-    char *get_args = va_arg(args,char *);
-    if(get_args == NULL || *get_args == 0xffffff){
+    for(unsigned int i = 0; i < strlen(format); i++){
+        if(format[i] == '%'){
+            args_type[0] = format[i+1];
+            has_args = true;
+            break;
+        }
+    }
+    if(!has_args){
         connect_print_log(format);
         return;
     }
-    char get_content[strlen(format) + strlen(get_args)];
+    char *get_args_char = NULL;
+    int get_args_int = 0;
+    int len_args = 0;
+    switch (args_type[0]) {
+        case 's':
+            get_args_char = va_arg(args,char *);
+            len_args = strlen(get_args_char);
+            break;
+        case 'd':
+            get_args_int = va_arg(args, int);
+            break;
+    }
+    char get_content[strlen(format) + len_args];
     while(i < sizeof (get_content)){
         get_content[i] = format[k];
         if(get_content[i] == '%'){
-            while(get_args[j]){
-                get_content[i] = get_args[j];
-                j++;
-                i++;
+            if(get_args_char != NULL){
+                while(get_args_char[j]){
+                    get_content[i] = get_args_char[j];
+                    j++;
+                    i++;
+                }
+            }else{
+                get_content[i] = get_args_int + '0';
+                get_content[i+1] = '\0';
             }
             j = 0;
             k += 2;
@@ -1155,6 +1178,7 @@ void _ui_print_log(const char * func_name, bool use_default_color, char * format
         i++;
         k++;
     }
+    format = &get_content;
     connect_print_log(format);
     va_end(args);
     return;
