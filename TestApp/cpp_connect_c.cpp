@@ -5,14 +5,6 @@
 extern "C"{
 #endif
 
-static MainWindow *mainwindow_instance = NULL;
-
-void lazyConnect(){
-    if(mainwindow_instance == NULL){
-        mainwindow_instance = new MainWindow;
-    }
-}
-
 void connect_print_log(char *format)
 {
     w->print_log(format);

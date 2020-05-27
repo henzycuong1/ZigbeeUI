@@ -39,11 +39,11 @@ signals:
 
 public slots:
 
-    void newItem(unsigned int id, unsigned int address);
+    void newItem(unsigned int id, uint64_t address);
 
-    void newItem(QStandardItem *item, unsigned int address);
+    void newItem(QStandardItem *item, uint64_t address);
 
-    bool newDevice(unsigned int address);
+    bool newDevice(uint64_t address);
 
     void receiveNetwork(QVariant ds_network);
 
@@ -103,7 +103,7 @@ private:
 
     QAction *rightScene_0,*rightScene_1, *rightScene_2, *rightScene_3, *rightScene_4, *rightScene_5, *rightScene_6, *rightScene_7, *rightScene_8, *rightScene_9;
 
-    QAction *rightRemoveGroup,*rightRemoveScene;
+    QAction *rightRemoveGroup,*rightRemoveScene, *rightClearLog;
 
     QString string = "";
 

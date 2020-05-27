@@ -1104,6 +1104,8 @@ void console_event_handler(void * arg)
 
 void ui_print_status(uint64_t timeout_ms, char * format, ...)
 {
+    UI_PRINT_LOG(format);
+    return;
 	va_list args;
 	char tempstr[UI_STATUS_LINE_LENGTH + 1];
 	

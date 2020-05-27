@@ -21,10 +21,10 @@ DEFINES += "HAVE_MALLOC_H"
 #DEFINES += "USER_INTERFACE_H"
 
 SOURCES += \
-#        ./google/protobuf-c/protobuf-c-data-buffer.c \
-#        ./google/protobuf-c/protobuf-c-dispatch.c \
-#        ./google/protobuf-c/protobuf-c-rpc.c \
-#        ./google/protobuf-c/protobuf-c.c \
+        ./google/protobuf-c/protobuf-c-data-buffer.c \
+        ./google/protobuf-c/protobuf-c-dispatch.c \
+        ./google/protobuf-c/protobuf-c-rpc.c \
+        ./google/protobuf-c/protobuf-c.c \
         ../engines/actions_engine.c \
         ../engines/attribute_engine.c \
         ../engines/commissioning_engine.c \
@@ -85,9 +85,9 @@ INCLUDEPATH += \
  ../ \
  ../framework \
  ../engines \
-# ./google/protobuf-c/ \
+ ./google/protobuf-c/ \
 
-unix|win32: LIBS += -lprotobuf-c
+#unix|win32: LIBS += -lprotobuf-c
 
 FORMS += \
     mainwindow.ui \

@@ -544,6 +544,7 @@ int si_init(char * nwk_manager_server_hostname, u_short nwk_manager_server_port,
 	if (tcp_new_server_connection(&network_manager_server, nwk_manager_server_hostname, nwk_manager_server_port, (server_incoming_data_handler_t)si_nwk_manager_incoming_data_handler, "NWK_MGR", nwk_mgr_server_connected_disconnected_handler) == -1)
 	{
 		fprintf(stderr,"ERROR, wrong network manager server\n");
+        UI_PRINT_LOG("ERROR, wrong network manager server\n");
 		return -1;
 	}
 	
@@ -551,6 +552,7 @@ int si_init(char * nwk_manager_server_hostname, u_short nwk_manager_server_port,
 	{
 		tcp_disconnect_from_server(&network_manager_server);
 		fprintf(stderr,"ERROR, wrong gateway server\n");
+        UI_PRINT_LOG("ERROR, wrong network manager server\n");
 		return -1;
 	}
 
@@ -559,6 +561,7 @@ int si_init(char * nwk_manager_server_hostname, u_short nwk_manager_server_port,
 		tcp_disconnect_from_server(&gateway_server);
 		tcp_disconnect_from_server(&network_manager_server);
 		fprintf(stderr,"ERROR, wrong ota server\n");
+        UI_PRINT_LOG("ERROR, wrong network manager server\n");
 		return -1;
 	}
 

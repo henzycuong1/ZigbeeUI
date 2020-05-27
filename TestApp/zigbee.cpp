@@ -1,5 +1,5 @@
 #include "zigbee.h"
-
+#include "user_interface.h"
 #define CALL_STACK_TRACE_DEPTH 10
 Q_DECLARE_METATYPE(network_info_t)
 Q_DECLARE_METATYPE(device_info_t)
@@ -30,18 +30,32 @@ void zigbee::segmentation_fault_handler(int signum, siginfo_t *info, void *conte
 
     fprintf(stderr, "ERROR: signal %d was trigerred:\n", signum);
 
+    char *p = strdup("ERROR: signal %d was trigerred:\n");
+
+//    UI_PRINT_LOG(p,signum);
+
     fprintf(stderr, "  Fault address: %p\n", info->si_addr);
+
+    p = strdup("  Fault address: %p\n");
+
+//    UI_PRINT_LOG(p,info->si_addr);
 
     switch (info->si_code)
     {
         case SEGV_MAPERR:
             fprintf(stderr, "  Fault reason: address not mapped to object\n");
+            p = strdup("  Fault reason: address not mapped to object\n");
+//            UI_PRINT_LOG(p);
             break;
         case SEGV_ACCERR:
             fprintf(stderr, "  Fault reason: invalid permissions for mapped object\n");
+            p = strdup("  Fault reason: invalid permissions for mapped object\n");
+//            UI_PRINT_LOG(p);
             break;
         default:
             fprintf(stderr, "  Fault reason: %d (this value is unexpected).\n", info->si_code);
+            p = strdup("  Fault reason: %d (this value is unexpected).\n");
+//            UI_PRINT_LOG(p, info->si_code);
             break;
     }
 
@@ -51,18 +65,23 @@ void zigbee::segmentation_fault_handler(int signum, siginfo_t *info, void *conte
     if (size == 0)
     {
         fprintf(stderr, "Stack trace unavailable\n");
+        p = strdup("Stack trace unavailable\n");
+ //       UI_PRINT_LOG(p);
     }
     else
     {
         fprintf(stderr, "Stack trace folows%s:\n", (size < CALL_STACK_TRACE_DEPTH) ? "" : " (partial)");
-
+        p = strdup("Stack trace folows%s:\n");
         // print out the stack frames symbols to stderr
+//        UI_PRINT_LOG(p, (size < CALL_STACK_TRACE_DEPTH) ? "" : " (partial)");
         backtrace_symbols_fd(array, size, STDERR_FILENO);
     }
 
 
     /* unregister this handler and let the default action execute */
     fprintf(stderr, "Executing original handler...\n");
+    p = strdup("Executing original handler...\n");
+ //   UI_PRINT_LOG(p);
     unregister_segmentation_fault_handler();
 }
 

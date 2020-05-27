@@ -37,9 +37,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::newItem(unsigned int id, unsigned int address)
+void MainWindow::newItem(unsigned int id, uint64_t address)
 {
-    auto parent = modelItem->findItems(QString(address));
+    QString address_string = QString::number(address,16).toUpper();
+    reverse(address_string.begin(),address_string.end());
+    auto parent = modelItem->findItems(address_string);
     QStandardItem *item = new QStandardItem;
     item->setData(QString::number(id),Qt::DisplayRole);
     item->setData(QVariant(false),ROLE_PARENT);
@@ -51,11 +53,13 @@ void MainWindow::newItem(unsigned int id, unsigned int address)
     }
 }
 
-void MainWindow::newItem(QStandardItem *item, unsigned int address)
+void MainWindow::newItem(QStandardItem *item, uint64_t address)
 {
     item->setData(QVariant(false),ROLE_PARENT);
     item->setData(QVariant(true),ROLE_ITEM);
-    auto parent = modelItem->findItems(QString::number(address,16).toUpper());
+    QString address_string = QString::number(address,16).toUpper();
+    reverse(address_string.begin(),address_string.end());
+    auto parent = modelItem->findItems(address_string);
     if(parent.count() > 0){
         parent.at(0)->appendRow(item);
     }else{
@@ -63,14 +67,16 @@ void MainWindow::newItem(QStandardItem *item, unsigned int address)
     }
 }
 
-bool MainWindow::newDevice(unsigned int address)
+bool MainWindow::newDevice(uint64_t address)
 {
-    auto list = modelItem->findItems(QString::number(address,16).toUpper());
+    QString address_string = QString::number(address,16).toUpper();
+    reverse(address_string.begin(),address_string.end());
+    auto list = modelItem->findItems(address_string);
     if(list.count() > 0){
         return false;
     }
     QStandardItem *item = new QStandardItem;
-    item->setData(QString::number(address,16).toUpper(),Qt::DisplayRole);
+    item->setData(address_string,Qt::DisplayRole);
     item->setData(QVariant(true),ROLE_PARENT);
     item->setData(QVariant(false),ROLE_ITEM);
     modelItem->appendRow(item);
@@ -108,7 +114,7 @@ void MainWindow::receiveDevie(QVariant ds_device)
         return;
     }
     for(int i = 0; i < 20; i++){
-        auto itemList = modelItem->findItems(QString::number(ds_device_info.ep_list[i].device_id,16));
+        auto itemList = modelItem->findItems(QString::number(ds_device_info.ep_list[i].endpoint_id));
         if(itemList.count() > 0){
             continue;
         }
@@ -116,7 +122,7 @@ void MainWindow::receiveDevie(QVariant ds_device)
             continue;
         }
         QStandardItem *item = new QStandardItem;
-        item->setData(QString::number(ds_device_info.ep_list[i].device_id,16),Qt::DisplayRole);
+        item->setData(QString::number(ds_device_info.ep_list[i].endpoint_id),Qt::DisplayRole);
         item->setData(ds_device_info.ep_list[i].endpoint_id,ROLE_ENDPOINT);
         item->setData(0xFFFFFF,ROLE_GROUP_ADDR);
         item->setData(QString::number(ds_device_info.ieee_addr),ROLE_IEEE_ADDR);
@@ -127,7 +133,7 @@ void MainWindow::receiveDevie(QVariant ds_device)
 void MainWindow::print_log(char *format)
 {
     //string.append(format);
-    ui->listWidget->addItem(QString(format));
+    ui->viewLog->addItem(QString(format));
     //qDebug() << string;
 }
 
@@ -156,7 +162,7 @@ void MainWindow::customContextMenu(QPoint pos)
 {
     QModelIndex index = ui->viewItem->indexAt(pos);
     currentIndex = index;
-    //if(index.data(ROLE_ITEM).toBool()){
+    if(index.data(ROLE_ITEM).toBool()){
         QMenu *menu = new QMenu(this);
         menu->addAction(rightBind);
         menu->addMenu(rightGroup);
@@ -165,7 +171,12 @@ void MainWindow::customContextMenu(QPoint pos)
         menu->addAction(rightRemoveScene);
         menu->addAction(rightSceneRecall);
         menu->popup(ui->viewItem->viewport()->mapToGlobal(pos));
-   // }
+    }
+    if(ui->viewLog->indexAt(pos).model() == ui->viewLog->model()){
+        QMenu *menu = new QMenu(this);
+        menu->addAction(rightClearLog);
+        menu->popup(ui->viewLog->viewport()->mapToGlobal(pos));
+    }
 }
 
 void MainWindow::processBind()
@@ -206,6 +217,7 @@ void MainWindow::initAction(){
     rightSceneRecall = new QAction({tr("Scene Recall")},this);
     rightRemoveGroup = new QAction({tr("Remove Group")},this);
     rightRemoveScene = new QAction({tr("Remove Scene")},this);
+    rightClearLog = new QAction({tr("Clear")},this);
     rightGroup_0 = new QAction({tr("Group 0")},this);
     rightGroup_1 = new QAction({tr("Group 1")},this);
     rightGroup_2 = new QAction({tr("Group 2")},this);
@@ -251,6 +263,7 @@ void MainWindow::initAction(){
 void MainWindow::initConnect(){
     connect(ui->viewItem->selectionModel(),&QItemSelectionModel::currentChanged,this,&MainWindow::selectItem);
     connect(ui->viewItem,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(customContextMenu(QPoint)));
+    connect(ui->viewLog,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(customContextMenu(QPoint)));
     connect(modelProperty,&QStandardItemModel::itemChanged,this,&MainWindow::dataChange);
 
     connect(rightBind,&QAction::triggered,this,&MainWindow::processBind);
@@ -278,6 +291,9 @@ void MainWindow::initConnect(){
     connect(rightScene_9,&QAction::triggered,this,[=]{ui_selected_scene = 9;processAddScene(9);});
 
     connect(rightRemoveGroup,&QAction::triggered,this,&MainWindow::processRemoveGroup);
+    connect(rightRemoveScene,&QAction::triggered,this,&MainWindow::processRemoveScene);
+
+    connect(rightClearLog,&QAction::triggered,this,[=]{ui->viewLog->clear();});
 }
 
 void MainWindow::initPropertyView()
